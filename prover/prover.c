@@ -268,15 +268,25 @@ void AddKBSentence(void) {
 /* You must write this function */
 void RandomResolve()
 {
-   /*int i;
-   int j;
+   int i, j, k, l;
+
+   int pred1;
+   int pred2;
    int unity;
+   Assignment theta;
    for(i = 0; i < sentptr; i++){
-      for(j = sentptr; j > 0; j++){
-         unity = unify(i, 1, j, 1, Assignment *theta);
-         printf("\nUnify: %d\n",unity);
+      pred1 = sentlist[i].num_pred;
+      for(j = i + 1; j < sentptr; j++){
+	 pred2 = sentlist[j].num_pred;
+		for(k = 0; k < pred1; k++){
+			for(l = 0; l < pred2; l++){	
+         			unity = unify(i, k, j, l, theta);
+	 			printf("\ni = %d  j = %d\n", i, j);
+         			printf("\nUnify: %d\n",unity);
+		}
+	}
       }
-   }*/
+   }
 
 
    rTime=0.0;
@@ -333,15 +343,21 @@ int unify(int sent1, int p1, int sent2, int p2, Assignment *theta) {
    int p;
    int i;
    int numAssign = 0;
-   if(sentlist[sent1].neg[p1] == sentlist[sent2].neg[p2])
-      return -1;
-   if(sentlist[sent1].pred[p1] != sentlist[sent2].pred[p2])
-      return -1;
+   if(sentlist[sent1].neg[p1] == sentlist[sent2].neg[p2]){
+	printf("pred1 %s -- pred2 %s\n",predlist[sentlist[sent1].neg[p1]].name, predlist[sentlist[sent2].neg[p2]].name);
+	printf("failure 1");
+	return -1;
+	}
+   if(sentlist[sent1].pred[p1] != sentlist[sent2].pred[p2]){
+	printf("pred1 %s -- pred2 %s\n",predlist[sentlist[sent1].pred[p1]].name, predlist[sentlist[sent2].pred[p2]].name);
 
-   Parameter param1[MAXPARAM] = {*(sentlist[sent1].param[p1])};
-   Parameter param2[MAXPARAM] = {*(sentlist[sent2].param[p2])};
-   //param1 = sentlist[sent1].param[p1];
-   //param2 = sentlist[sent2].param[p2];
+        printf("Failure 2");
+	return -1;
+	}
+   Parameter *param1;// = sentlist[sent1].param[p1];
+   Parameter *param2;// = sentlist[sent2].param[p2];
+   param1 = sentlist[sent1].param[p1];
+   param2 = sentlist[sent2].param[p2];
 
    for(p = 0; p < predlist[sentlist[sent1].pred[p1]].numparam; p++) {
       //Need to walk assignment list and make all the assignments
@@ -359,9 +375,11 @@ int unify(int sent1, int p1, int sent2, int p2, Assignment *theta) {
             theta[numAssign].var = &(param2[p]);
             theta[numAssign++].val = &(param1[p]);
       } else {
+	printf("Failure 3");
          return -1;
       }
    }
+   printf("success");
    return numAssign;
 }
 
