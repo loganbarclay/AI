@@ -264,6 +264,17 @@ void AddKBSentence(void) {
 /* You must write this function */
 void RandomResolve()
 {
+   /*int i;
+   int j;
+   int unity;
+   for(i = 0; i < sentptr; i++){
+      for(j = sentptr; j > 0; j++){
+         unity = unify(i, 1, j, 1, Assignment *theta);
+         printf("\nUnify: %d\n",unity);
+      }
+   }*/
+
+
    rTime=0.0;
    rSteps=0;
    printf("\nRun your RandomResolve routine here\n");
@@ -290,7 +301,7 @@ void HeuristicResolve()
 /* You must write this function */
 int tryResolution(int sent1, int sent2) {
 
-   Assignment theta[MAXPARAM];
+ /*  Assignment theta[MAXPARAM];
    int p1,p2;
    for(p1 = 0; p1 < sentlist[sent1].num_pred; p1++){
       for(p2 = 0; p2 < sentlist[sent2].num_pred; p2++){
@@ -300,7 +311,7 @@ int tryResolution(int sent1, int sent2) {
             int pred[MXPRED];
             char param[MAXPRED][MAXPARAM][16];
             int snum;
-            //fill up with everything from these two sentances except the two mathing prdicates
+            //fill up with everything from these two sentances except the two matching prdicates
             //everything but p1 and p2
             //walk assignment list and perform assignments on all the predicate parameters in
             //char param[MAXPRED][MAXPARAM][16]
@@ -310,7 +321,8 @@ int tryResolution(int sent1, int sent2) {
             sentptr++
          }
       }
-   }
+   }*/
+   return 0;
 }
 
 int unify(int sent1, int p1, int sent2, int p2, Assignment *theta) {
@@ -322,24 +334,24 @@ int unify(int sent1, int p1, int sent2, int p2, Assignment *theta) {
    if(sentlist[sent1].pred[p1] != sentlist[sent2].pred[p2])
       return -1;
 
-   Parameter param1[MAXPARAM];
-   Parameter param2[MAXPARAM];
-   param1 = sentlist[sent1].param[p1];
-   param2 = sentlist[sent2].param[p2];
+   Parameter param1[MAXPARAM] = {*(sentlist[sent1].param[p1])};
+   Parameter param2[MAXPARAM] = {*(sentlist[sent2].param[p2])};
+   //param1 = sentlist[sent1].param[p1];
+   //param2 = sentlist[sent2].param[p2];
 
-   for(p = 0; p < predlist[sentlist[sent1].pred[p1].numparam; p++]) {
+   for(p = 0; p < predlist[sentlist[sent1].pred[p1]].numparam; p++) {
       //Need to walk assignment list and make all the assignments
-      for(i = 0; i < numAssign; i++){
-         if(!memcomp(&(param1[p]), theta[i].var, sizeof(Parameter)))
+      for(i = 0; i < numAssign; i++) {
+         if(!memcmp(&(param1[p]), theta[i].var, sizeof(Parameter)))
             param1[p] = *(theta[i].val);
-         if(!memcomp(&(param2[p]), theta[i].var, sizeof(Parameter)))
+         if(!memcmp(&(param2[p]), theta[i].var, sizeof(Parameter)))
             param2[p] = *(theta[i].val);
       }
-      if(memcomp(param1[p], param2[p], sizeof(Parameter))) {
+      if(memcmp(&(param1[p]), &(param2[p]), sizeof(Parameter))) {
          if(variable(param1[p]))
             theta[numAssign].var = &(param1[p]);
             theta[numAssign++].val = &(param2[p]);
-      } else if (variable(param2[p])){
+      } else if (variable(param2[p])) {
             theta[numAssign].var = &(param2[p]);
             theta[numAssign++].val = &(param1[p]);
       } else {
