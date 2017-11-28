@@ -36,6 +36,7 @@ typedef struct {
 
 typedef struct {
    char comment[MAXSTRLEN]; /* comment from input file */
+   int weight;		    /* heuristic value */
    int refutePart;          /* set to true if this sentence came from the negated part of the knowledge base */
    int pred[MAXPRED];         /* List of predicates in sentence (indexes into Predicate array) */
    int neg[MAXPRED];         /* Added by T. Andersen. neg[i] set to 1 if predicate indexed by pred[i] is negated */
@@ -110,7 +111,7 @@ void Standardize(char param[MAXPRED][MAXPARAM][16], Parameter sparam[MAXPRED][MA
 }
 
 /* Add a sentence to the KB */
-void AddSentence(int neg[MAXPRED],int pred[MAXPRED], char param[MAXPRED][MAXPARAM][16], int snum, char *leftover) {
+void AddSentence(int neg[MAXPRED],int pred[MAXPRED], char param[MAXPRED][MAXPARAM][16], int snum, int weight, char *leftover) {
    int i;
 
    Standardize(param,sentlist[sentptr].param,pred,snum);
@@ -126,13 +127,14 @@ void AddSentence(int neg[MAXPRED],int pred[MAXPRED], char param[MAXPRED][MAXPARA
    }
    sentlist[sentptr].refutePart = RefuteFlag;
    sentlist[sentptr].num_pred = snum;
+   sentlist[sentptr].weight = weight;
    sentptr++;
 }
 
 /* Convert text version of a sentence into internal representation */
 int StringToSentence(char *line) {
    char pname[32],param[MAXPRED][MAXPARAM][16];
-   int i,j,p,done,neg[MAXPRED],pred[MAXPRED],snum;
+   int i,j,p,done,neg[MAXPRED],pred[MAXPRED],snum, weight;
 
    memset(param,0,MAXPRED*MAXPARAM*16*sizeof(char));
    i = 0;
@@ -164,6 +166,7 @@ int StringToSentence(char *line) {
       /* get the parameters */
       done = 0;
       p = 0;
+      weight = 0;
       while(!done) {
          i = j+1;
          while(isspace(line[i])) i++;
@@ -174,7 +177,7 @@ int StringToSentence(char *line) {
          switch(line[j]) {
             case ' ':       /* added by Tim Andersen to allow spaces here */
             case ')': 
-            case ',': strncpy(param[snum][p],&line[i],j-i); p++; break;
+            case ',': strncpy(param[snum][p],&line[i],j-i); p++; weight++; break;
             break;
             default: return 0;  
          }
@@ -191,7 +194,7 @@ int StringToSentence(char *line) {
       pred[snum] = AddPredicate(pname,p);
       snum++;
    }
-   AddSentence(neg,pred,param,snum,&line[i]);
+   AddSentence(neg,pred,param,snum,weight,&line[i]);
    return 1;
 }
 
