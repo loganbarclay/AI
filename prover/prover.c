@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <time.h>
+#include "hash.c"
 
 #define MAXPRED 50
 #define MAXPARAM 10
