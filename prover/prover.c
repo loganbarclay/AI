@@ -283,9 +283,9 @@ void RandomResolve()
          			unity = unify(i, k, j, l, theta);
 	 			printf("\ni = %d  j = %d\n", i, j);
          			printf("\nUnify: %d\n",unity);
+				}
+			}
 		}
-	}
-      }
    }
 
 
@@ -315,7 +315,7 @@ void HeuristicResolve()
 /* You must write this function */
 int tryResolution(int sent1, int sent2) {
 
- /*  Assignment theta[MAXPARAM];
+   Assignment theta[MAXPARAM];
    int p1,p2;
    for(p1 = 0; p1 < sentlist[sent1].num_pred; p1++){
       for(p2 = 0; p2 < sentlist[sent2].num_pred; p2++){
@@ -335,7 +335,7 @@ int tryResolution(int sent1, int sent2) {
             sentptr++
          }
       }
-   }*/
+   }
    return 0;
 }
 
