@@ -21,7 +21,7 @@ public class Parser {
 		}
 	}
 
-	public KnowledgeBase fillKnowledgeBase(String filename) {
+	public KnowledgeBase fillKnowledgeBase(String filename, boolean heuristics) {
 		String line;
 		HashSet<Sentence> kbSentences = new HashSet<>();
 		HashSet<Sentence> kbRefute = new HashSet<>();
@@ -30,9 +30,9 @@ public class Parser {
 		try (BufferedReader reader = Files.newBufferedReader(Paths.get(filename), Charset.defaultCharset())) {
 			while ((line = reader.readLine()) != null) {
 				if (!line.equals("")) {
-					kbSentences.add(parseSentence(line));
+					kbSentences.add(parseSentence(line, heuristics));
 				} else {
-					kbRefute.add(parseSentence(reader.readLine()));
+					kbRefute.add(parseSentence(reader.readLine(), heuristics));
 				}
 			}
 		} catch (IOException ex) {
@@ -43,7 +43,7 @@ public class Parser {
 		return retKB;
 	}
 
-	public Sentence parseSentence(String sentence) {
+	public Sentence parseSentence(String sentence, boolean heuristics) {
 		PriorityQueue<Predicate> predicates = new PriorityQueue<>();
 		Sentence retSentence;
 
@@ -52,7 +52,7 @@ public class Parser {
 		for (String pred : splitPreds) {
 			predicates.add(parsePredicates(pred));
 		}
-		retSentence = new Sentence(predicates);
+		retSentence = new Sentence(predicates, heuristics);
 		
 		return retSentence;
 	}

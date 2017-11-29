@@ -35,7 +35,7 @@ public class KnowledgeBase {
         return retVal;
     }
 
-    public KnowledgeBase uniqueVariables()
+    public KnowledgeBase standardizeVariables()
     {
         paramsSeen.clear();
         return new KnowledgeBase(uniqueify(sentences), uniqueify(refuted)); 

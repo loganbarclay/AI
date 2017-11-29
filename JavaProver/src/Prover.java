@@ -2,50 +2,80 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 
 public class Prover {
-    private static int numResolutions = 0;
-    private static long start = 0;
-    private static long finish = 0;
+    private static int heurNumResolutions = 0;
+    private static long heurStart = 0;
+    private static long heurFinish = 0;
+    private static int randNumResolutions = 0;
+    private static long randStart = 0;
+    private static long randFinish = 0;
+    private static String heurResults = "";
+    private static String randResults = "";
+    private static String heurParents = "";
+    private static String randParents = "";
     
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args)
     {
+    	if(args.length < 1){
+    		System.out.println("Usage: specify valid filename");
+    		System.exit(1);
+    	}
+    	
+    	String filename = args[0];
+    	boolean heuristics = true;
+    	boolean random = false;
+    	
         Parser parser = new Parser();
-        KnowledgeBase kb = parser.fillKnowledgeBase(args[0]);
-        System.out.println(kb.toString());
+        KnowledgeBase heuristicsKB = parser.fillKnowledgeBase(filename, heuristics);
+        KnowledgeBase randomKB = parser.fillKnowledgeBase(filename, heuristics);
+        System.out.println(heuristicsKB.toString());
 
-        kb = kb.uniqueVariables();
-        //the variable names should all be unique 
-        //and because of my hashing scheme there should be no duplicate literals in a sentence and no duplicate sentences
-        
-        //i am timing the amount of time required to complete the proof, not the parsing
-        start = System.currentTimeMillis();
-        HashSet<Sentence> support = resolve(kb.getSentences(), kb.getRefuted());
+        heuristicsKB = heuristicsKB.standardizeVariables();
+
+        heurStart = System.currentTimeMillis();
+        HashSet<Sentence> support = resolve(heuristicsKB.getSentences(), heuristicsKB.getRefuted(), heuristics);
         if (support == null)
         {
             System.out.println("failure");
-            System.exit(0);
         }
-
         while (support != null)
         {
-            support = resolve(kb.getSentences(), support);
+            support = resolve(heuristicsKB.getSentences(), support, heuristics);
         }
-        System.out.println("failure");
+        heurFinish = System.currentTimeMillis();
+        
+        support = resolve(randomKB.getSentences(), randomKB.getRefuted(), random);
+        if (support == null)
+        {
+            System.out.println("failure");
+        }
+        
+        while (support != null)
+        {
+            support = resolve(randomKB.getSentences(), support, random);
+        }
+        
+        printResults();
+   
         System.exit(0);
     }
 
     @SuppressWarnings("unchecked")
-	public static HashSet<Sentence> resolve(HashSet<Sentence> sentencesSet, HashSet<Sentence> supportSet)
+	public static HashSet<Sentence> resolve(HashSet<Sentence> sentencesSet, HashSet<Sentence> supportSet, boolean heuristics)
     {
-        List<Sentence> sentences = new LinkedList<>(sentencesSet);
-        List<Sentence> support = new LinkedList<>(supportSet);
-        Collections.sort(sentences);
-        Collections.sort(support);
+    	
+        //List<Sentence> sentences = new LinkedList<>(sentencesSet);
+        //List<Sentence> support = new LinkedList<>(supportSet);
+        //Collections.sort(sentences);
+        //Collections.sort(support);
+        PriorityQueue<Sentence> sentences = new PriorityQueue<>(sentencesSet);
+        PriorityQueue<Sentence> support = new PriorityQueue<>(supportSet);
 
         Sentence result;
         for (Sentence supporting : support)
@@ -57,25 +87,46 @@ public class Prover {
                 {
                     if (result.isGoal())
                     {
-                    	finish = System.currentTimeMillis();
-                    	numResolutions++;
-                        System.out.println(result.getParents("") + "\n");
-                        System.out.println("===============================");
-                        System.out.println("===== Heuristic results =======");
-                        System.out.println("Resolutions: " + numResolutions);
-                        System.out.println("Time: " + (finish - start) + " milliseconds");
-                        System.out.println("===============================");
-                        System.exit(0);
+                    	
+                    	if(heuristics){
+                    		heurFinish = System.currentTimeMillis();
+                        	heurNumResolutions++;
+                        	heurParents = result.getParents("") + "\n";
+                    	}else{
+                    		randFinish = System.currentTimeMillis();
+                    		randNumResolutions++;
+                    		randParents = result.getParents("") + "\n";
+                 
+                    	}
+                    	
+                    	
+
+                        return null;
                     }
                     else if (supportSet.add(result))
                     {
-                        
-                        numResolutions++;
+                        if(heuristics){
+                        	heurNumResolutions++;
+                        }else{
+                        	randNumResolutions++;
+                        }
+                     
                         return supportSet;
                     }
                 }
             }
         }
         return null;
+    }
+    
+    private static void printResults(){
+        System.out.println(heurParents);
+        System.out.println("===============================");
+        System.out.println("===== Heuristic results =======");
+        System.out.println("Resolutions: " + heurNumResolutions);
+        System.out.println("Time: " + (heurFinish - heurStart) + " milliseconds");
+        System.out.println("===============================");
+    	
+    	
     }
 }
