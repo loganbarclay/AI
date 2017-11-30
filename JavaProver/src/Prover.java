@@ -54,6 +54,7 @@ public class Prover {
         }
         heurFinish = System.currentTimeMillis();
         
+        randStart = System.currentTimeMillis();
         support = resolve(randomKB.getSentences(), randomKB.getRefuted(), random);
         if (support == null)
         {
@@ -64,6 +65,7 @@ public class Prover {
         {
             support = resolve(randomKB.getSentences(), support, random);
         }
+        randFinish = System.currentTimeMillis();
         
         printResults();
    
@@ -131,6 +133,12 @@ public class Prover {
         System.out.println("Time: " + (heurFinish - heurStart) + " milliseconds");
         System.out.println("===============================");
     	
+        System.out.println(randParents);
+        System.out.println("===============================");
+        System.out.println("===== Random results =======");
+        System.out.println("Resolutions: " + randNumResolutions);
+        System.out.println("Time: " + (randFinish - randStart) + " milliseconds");
+        System.out.println("===============================");
     	
     }
 }
