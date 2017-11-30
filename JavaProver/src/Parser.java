@@ -48,7 +48,10 @@ public class Parser {
 		Scanner sent = new Scanner(sentence);
 		
 		while (sent.hasNext()) {
-			predicates.add(parsePredicates(sent.next()));
+			Predicate retPred = parsePredicates(sent.next());
+			if (retPred != null) {
+				predicates.add(retPred);
+			}
 		}
 
 		retSentence = new Sentence(predicates, heuristics);
@@ -68,12 +71,17 @@ public class Parser {
 			negation = true;
 			j++;
 		}
-		
+		try {
 		nameStr = predicate.substring(j, predicate.indexOf('('));
+		} catch(Exception e) {
+			return null;
+		}
 		j = (predicate.indexOf('(')+1);
-		
+		try {
 		tmpParams = predicate.substring(j, predicate.indexOf(')'));
-		
+		} catch(Exception e) {
+			return null;
+		}
 		Scanner scan = new Scanner(tmpParams).useDelimiter(",");
 		while (scan.hasNext()) {
 			params.add(scan.next());
