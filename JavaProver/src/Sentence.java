@@ -27,6 +27,7 @@ public class Sentence implements Comparable<Sentence> {
         this.predicateQueue = preds;
         this.firstParent = p1;
         this.secondParent = p2;
+        score(heuristics);
         
     }
     
@@ -37,6 +38,7 @@ public class Sentence implements Comparable<Sentence> {
         this.firstParent = p1;
         this.secondParent = p2;
         this.substitution = substitution;
+        score(heuristics);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class Sentence implements Comparable<Sentence> {
         for (Predicate predicate : predicateQueue)
         {
         	retVal += predicate.toString();
-                  }
+        }
         retVal += "\n";
      
         return retVal;
@@ -88,19 +90,21 @@ public class Sentence implements Comparable<Sentence> {
     private void score(boolean heuristics){
         if(heuristics){
         	heuristicScore();
+        	
         }
         else{
         	randomScore();
+        	
         }
     }
     public void heuristicScore()
     {
         this.score = 0;
-        this.score += predicateQueue.size();
+        this.score -= 5*predicateQueue.size();
         
         for (Predicate predicate : predicateQueue)
         {
-        	this.score += predicate.getParams().size();
+        	this.score -= predicate.getParams().size();
             
         }
 

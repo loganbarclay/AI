@@ -35,9 +35,10 @@ public class Prover {
     	boolean heuristics = true;
     	boolean random = false;
     	
-        Parser parser = new Parser();
-        KnowledgeBase heuristicsKB = parser.fillKnowledgeBase(inputFile, heuristics);
-        KnowledgeBase randomKB = parser.fillKnowledgeBase(inputFile, heuristics);
+        Parser heurParser = new Parser();
+        KnowledgeBase heuristicsKB = heurParser.fillKnowledgeBase(inputFile, heuristics);
+        Parser randParser = new Parser();
+        KnowledgeBase randomKB = randParser.fillKnowledgeBase(inputFile, random);
         System.out.println(heuristicsKB.toString());
 
         heuristicsKB = heuristicsKB.standardizeVariables();
