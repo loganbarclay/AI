@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class Parser {
 
 	private HashSet<String> alphabet = new HashSet<>();
+	private boolean heuristics = true;
 
 	public Parser() {
 		for (char ch = 'a', CH = 'A'; ch <= 'z'; ch++, CH++) {
@@ -17,7 +18,8 @@ public class Parser {
 		}
 	}
 
-	public KnowledgeBase fillKnowledgeBase(File filename) throws FileNotFoundException {
+	public KnowledgeBase fillKnowledgeBase(File filename, boolean heuristics) throws FileNotFoundException {
+		this.heuristics = heuristics;
 		String line;
 		HashSet<Sentence> kbSentences = new HashSet<>();
 		HashSet<Sentence> kbRefute = new HashSet<>();
@@ -49,7 +51,7 @@ public class Parser {
 			predicates.add(parsePredicates(sent.next()));
 		}
 
-		retSentence = new Sentence(predicates);
+		retSentence = new Sentence(predicates, heuristics);
 		sent.close();
 		return retSentence;
 	}

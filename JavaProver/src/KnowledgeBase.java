@@ -50,9 +50,9 @@ public class KnowledgeBase {
             HashMap<String, String> changedNames = new HashMap<>();
             for (Predicate p : sentence.getPreds())
             {
-                for (Object string : p.getParams())
+                for (String string : p.getParams())
                 {
-                    predsParams.add(string.toString());
+                    predsParams.add(string);
                 }
                 for (String string : predsParams)
                 {
@@ -64,10 +64,10 @@ public class KnowledgeBase {
             }
             for (Predicate p : sentence.getPreds())
             {
-                ArrayList params = p.getParams();
+                ArrayList<String> params = p.getParams();
                 for (int i = 0; i < params.size(); i++)
                 {
-                    String param = params.get(i).toString();
+                    String param = params.get(i);
                     if (changedNames.get(param) != null && !Param.isConst(param))
                     {
                         params.set(i, changedNames.get(param));

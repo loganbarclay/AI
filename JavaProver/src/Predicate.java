@@ -7,11 +7,11 @@ public class Predicate implements Comparable<Predicate> {
 
     private final boolean neg;
     private final String name;
-    private final ArrayList params;
+    private final ArrayList<String> params;
     private final Pattern csv = Pattern.compile(",");
     private final Pattern space = Pattern.compile(" ");
 
-    public Predicate(boolean neg, String name, ArrayList params)
+    public Predicate(boolean neg, String name, ArrayList<String> params)
     {
         this.neg = neg;
         this.name = name;
@@ -27,8 +27,8 @@ public class Predicate implements Comparable<Predicate> {
         builder.append("(");
         for (int i = 0; i < params.size(); i++)
         {
-            //String generalName = params[i];// .replaceAll("\\d*$", "");
-            builder.append(params.get(i));
+            String generalName = params.get(i);// .replaceAll("\\d*$", "");
+            builder.append(generalName);
             builder.append(i == params.size() - 1 ? "" : ",");
         }
         builder.append(") ");
@@ -41,7 +41,7 @@ public class Predicate implements Comparable<Predicate> {
         int hash = 0;
         hash += this.neg ? 71 : 0;
         hash += this.name.hashCode();
-        for (Object string : params)
+        for (String string : params)
         {
             /*leaving the number on for the hashcode because a predicate with the same params in one sentence
              is not equal to one in another sentence*/
@@ -61,7 +61,7 @@ public class Predicate implements Comparable<Predicate> {
         return name;
     }
 
-    public ArrayList getParams()
+    public ArrayList<String> getParams()
     {
         return params;
     }
@@ -164,9 +164,9 @@ public class Predicate implements Comparable<Predicate> {
             String[] sub = aSub.trim().split("/");
             for (int i = 0; i < params.size(); i++)
             {
-                if (params.contains(sub[0]))
+                if (params.get(i).equals(sub[0]))
                 {
-                    params.set(i, sub[1]);
+                    params.set(i, sub[1]) ;
                 }
             }
         }
