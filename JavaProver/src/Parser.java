@@ -8,14 +8,10 @@ import java.util.Scanner;
 
 public class Parser {
 
-	private HashSet<String> alphabet = new HashSet<>();
-	private boolean heuristics = true;
+	private boolean heuristics;
 
 	public Parser() {
-		for (char ch = 'a', CH = 'A'; ch <= 'z'; ch++, CH++) {
-			alphabet.add(ch + "");
-			alphabet.add(CH + "");
-		}
+		heuristics = true;
 	}
 
 	public KnowledgeBase fillKnowledgeBase(File filename, boolean heuristics) throws FileNotFoundException {
@@ -45,6 +41,9 @@ public class Parser {
 		PriorityQueue<Predicate> predicates = new PriorityQueue<>();
 		Sentence retSentence;
 		
+		sentence = sentence.replaceAll("\\( ", "\\(");
+		sentence = sentence.replaceAll(" \\)", "\\)");
+		
 		Scanner sent = new Scanner(sentence);
 		
 		while (sent.hasNext()) {
@@ -66,7 +65,7 @@ public class Parser {
 		String nameStr = "";
 		ArrayList params = new ArrayList();
 		String tmpParams;
-		
+		//System.out.println(predicate);
 		if (predicate.charAt(j) == '!') {
 			negation = true;
 			j++;

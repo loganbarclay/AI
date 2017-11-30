@@ -6,7 +6,7 @@ public class KnowledgeBase {
     
     private HashSet<Sentence> sentences;
     private HashSet<Sentence> refuted;
-    private static int uniqueifier = 0;
+    private static int next = 0;
     private HashSet<String> paramsSeen = new HashSet<>();
 
     public KnowledgeBase(HashSet<Sentence> sentences, HashSet<Sentence> refuted)
@@ -39,10 +39,10 @@ public class KnowledgeBase {
     public KnowledgeBase standardizeVariables()
     {
         paramsSeen.clear();
-        return new KnowledgeBase(uniqueify(sentences), uniqueify(refuted)); 
+        return new KnowledgeBase(standardize(sentences), standardize(refuted)); 
     }
     
-    private HashSet<Sentence> uniqueify(HashSet<Sentence> sentences)
+    private HashSet<Sentence> standardize(HashSet<Sentence> sentences)
     {
         for (Sentence sentence : sentences)
         {
@@ -58,7 +58,7 @@ public class KnowledgeBase {
                 {
                     if (paramsSeen.contains(string) && !changedNames.containsKey(string) && !Param.isConst(string))
                     {
-                        changedNames.put(string, string+uniqueifier++);
+                        changedNames.put(string, string+next++);
                     }
                 }
             }

@@ -51,6 +51,7 @@ public class Sentence implements Comparable<Sentence> {
         for (Predicate predicate : predicateQueue)
         {
         	retVal += predicate.toString();
+        	//System.out.println(retVal);
         }
         retVal += "\n";
      
