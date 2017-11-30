@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -6,11 +7,11 @@ public class Predicate implements Comparable<Predicate> {
 
     private final boolean neg;
     private final String name;
-    private final String[] params;
+    private final ArrayList params;
     private final Pattern csv = Pattern.compile(",");
     private final Pattern space = Pattern.compile(" ");
 
-    public Predicate(boolean neg, String name, String[] params)
+    public Predicate(boolean neg, String name, ArrayList params)
     {
         this.neg = neg;
         this.name = name;
@@ -24,11 +25,11 @@ public class Predicate implements Comparable<Predicate> {
         builder.append(neg ? "!" : "");
         builder.append(name);
         builder.append("(");
-        for (int i = 0; i < params.length; i++)
+        for (int i = 0; i < params.size(); i++)
         {
-            String generalName = params[i];// .replaceAll("\\d*$", "");
-            builder.append(generalName);
-            builder.append(i == params.length - 1 ? "" : ",");
+            //String generalName = params[i];// .replaceAll("\\d*$", "");
+            builder.append(params.get(i));
+            builder.append(i == params.size() - 1 ? "" : ",");
         }
         builder.append(") ");
         return builder.toString();
@@ -40,7 +41,7 @@ public class Predicate implements Comparable<Predicate> {
         int hash = 0;
         hash += this.neg ? 71 : 0;
         hash += this.name.hashCode();
-        for (String string : params)
+        for (Object string : params)
         {
             /*leaving the number on for the hashcode because a predicate with the same params in one sentence
              is not equal to one in another sentence*/
@@ -60,7 +61,7 @@ public class Predicate implements Comparable<Predicate> {
         return name;
     }
 
-    public String[] getParams()
+    public ArrayList getParams()
     {
         return params;
     }
@@ -72,7 +73,7 @@ public class Predicate implements Comparable<Predicate> {
 
     public boolean isUnifiable(Predicate that)
     {
-        return this.name.equals(that.getName()) && this.params.length == that.getParams().length && (this.neg == !that.isNeg() || !this.neg == that.isNeg());
+        return this.name.equals(that.getName()) && this.params.size() == that.getParams().size() && (this.neg == !that.isNeg() || !this.neg == that.isNeg());
     }
 
     public Predicate toggleNegation()
@@ -161,11 +162,11 @@ public class Predicate implements Comparable<Predicate> {
         for (String aSub : subs)
         {
             String[] sub = aSub.trim().split("/");
-            for (int i = 0; i < params.length; i++)
+            for (int i = 0; i < params.size(); i++)
             {
-                if (params[i].equals(sub[0]))
+                if (params.contains(sub[0]))
                 {
-                    params[i] = sub[1];
+                    params.set(i, sub[1]);
                 }
             }
         }

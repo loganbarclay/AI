@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -49,9 +50,9 @@ public class KnowledgeBase {
             HashMap<String, String> changedNames = new HashMap<>();
             for (Predicate p : sentence.getPreds())
             {
-                for (String string : p.getParams())
+                for (Object string : p.getParams())
                 {
-                    predsParams.add(string);
+                    predsParams.add(string.toString());
                 }
                 for (String string : predsParams)
                 {
@@ -63,13 +64,13 @@ public class KnowledgeBase {
             }
             for (Predicate p : sentence.getPreds())
             {
-                String[] params = p.getParams();
-                for (int i = 0; i < params.length; i++)
+                ArrayList params = p.getParams();
+                for (int i = 0; i < params.size(); i++)
                 {
-                    String param = params[i];
+                    String param = params.get(i).toString();
                     if (changedNames.get(param) != null && !Param.isConst(param))
                     {
-                        params[i] = changedNames.get(param);
+                        params.set(i, changedNames.get(param));
                     }
                 }
             }

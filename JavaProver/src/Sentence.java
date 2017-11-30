@@ -83,7 +83,7 @@ public class Sentence implements Comparable {
         
         for (Predicate predicate : predicateQueue)
         {
-            score += predicate.getParams().length;
+            score += predicate.getParams().size();
             
         }
         return score;

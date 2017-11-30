@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -11,11 +13,13 @@ public class Prover {
     
     /**
      * @param args the command line arguments
+     * @throws FileNotFoundException 
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws FileNotFoundException
+    {	
+    	File inputFile = new File(args[0]);
         Parser parser = new Parser();
-        KnowledgeBase kb = parser.fillKnowledgeBase(args[0]);
+        KnowledgeBase kb = parser.fillKnowledgeBase(inputFile);
         System.out.println(kb.toString());
 
         kb = kb.uniqueVariables();

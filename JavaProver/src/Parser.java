@@ -1,18 +1,14 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.PriorityQueue;
-import java.util.regex.Pattern;
+import java.util.Scanner;
 
 public class Parser {
 
 	private HashSet<String> alphabet = new HashSet<>();
-	private Pattern whitespace = Pattern.compile(" ");
-	private Pattern punctuation = Pattern.compile(",");
-
 
 	public Parser() {
 		for (char ch = 'a', CH = 'A'; ch <= 'z'; ch++, CH++) {
@@ -21,67 +17,69 @@ public class Parser {
 		}
 	}
 
-	public KnowledgeBase fillKnowledgeBase(String filename) {
+	public KnowledgeBase fillKnowledgeBase(File filename) throws FileNotFoundException {
 		String line;
 		HashSet<Sentence> kbSentences = new HashSet<>();
 		HashSet<Sentence> kbRefute = new HashSet<>();
 		KnowledgeBase retKB;
 
-		try (BufferedReader reader = Files.newBufferedReader(Paths.get(filename), Charset.defaultCharset())) {
-			while ((line = reader.readLine()) != null) {
-				if (!line.equals("")) {
-					kbSentences.add(parseSentence(line));
-				} else {
-					kbRefute.add(parseSentence(reader.readLine()));
-				}
-			}
-		} catch (IOException ex) {
-			System.err.println("Error parsing file");
-		}
-		retKB = new KnowledgeBase(kbSentences, kbRefute);
+		Scanner inFile = new Scanner(filename);
 		
+		while (inFile.hasNextLine()) {
+			line = inFile.nextLine();
+			if (!line.equals("")) {
+				kbSentences.add(parseSentence(line));
+			} else {
+				kbRefute.add(parseSentence(inFile.nextLine()));
+			}
+		}
+		
+		retKB = new KnowledgeBase(kbSentences, kbRefute);
+		inFile.close();
 		return retKB;
 	}
 
 	public Sentence parseSentence(String sentence) {
 		PriorityQueue<Predicate> predicates = new PriorityQueue<>();
 		Sentence retSentence;
-
-		sentence = sentence.replaceAll("\\s+(?=[^()]*\\))", "");
-		String[] splitPreds = whitespace.split(sentence);
-		for (String pred : splitPreds) {
-			predicates.add(parsePredicates(pred));
-		}
-		retSentence = new Sentence(predicates);
 		
+		Scanner sent = new Scanner(sentence);
+		
+		while (sent.hasNext()) {
+			predicates.add(parsePredicates(sent.next()));
+		}
+
+		retSentence = new Sentence(predicates);
+		sent.close();
 		return retSentence;
 	}
 
 	public Predicate parsePredicates(String predicate) {
+		int j = 0;
 		Predicate retPredicate;
 		boolean negation = false;
 		String nameStr = "";
+		ArrayList params = new ArrayList();
+		String tmpParams;
 		
-		String[] splitParameters = null;
-		predicate = predicate.replaceAll(" ", "");
-
-		for (int i = 0; i < predicate.length() && predicate.charAt(i) != '.'; i++) {
-			if (i == 0 && predicate.charAt(i) == '!') {
-				negation = true;
-			} else if (alphabet.contains(predicate.charAt(i) + "")) {
-				nameStr += predicate.charAt(i);
-			} else if (predicate.charAt(i) == '(') {
-				String parameters = predicate.substring(i + 1, predicate.indexOf(')'));
-				splitParameters = punctuation.split(parameters);
-				break;
-			} else {
-				//something went wrong parsing a predicate
-				System.err.println("Predicate error");
-				System.exit(1);
-			}
+		if (predicate.charAt(j) == '!') {
+			negation = true;
+			j++;
 		}
-		retPredicate = new Predicate(negation, nameStr, splitParameters);
 		
+		nameStr = predicate.substring(j, predicate.indexOf('('));
+		j = (predicate.indexOf('(')+1);
+		
+		tmpParams = predicate.substring(j, predicate.indexOf(')'));
+		
+		Scanner scan = new Scanner(tmpParams).useDelimiter(",");
+		while (scan.hasNext()) {
+			params.add(scan.next());
+		}
+
+		retPredicate = new Predicate(negation, nameStr, params);
+		
+		scan.close();
 		return retPredicate;
 		
 	}
