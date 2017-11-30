@@ -1,38 +1,29 @@
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.PriorityQueue;
-import java.util.Random;
 
 
-public class Sentence implements Comparable<Sentence> {
+public class Sentence implements Comparable {
 
     private PriorityQueue<Predicate> predicateQueue;
     private Sentence firstParent;
     private Sentence secondParent;
     private String substitution = null;
-    private int score;
-    private boolean heuristics;
 
-    public Sentence(PriorityQueue<Predicate> preds, boolean heuristics)
+    public Sentence(PriorityQueue<Predicate> preds)
     {
-    	this.heuristics = heuristics;
         this.predicateQueue = preds;
-        score(heuristics);
-
     }
     
-    public Sentence(PriorityQueue<Predicate> preds, Sentence p1, Sentence p2, boolean heuristics)
+    public Sentence(PriorityQueue<Predicate> preds, Sentence p1, Sentence p2)
     {
-    	this.heuristics = heuristics;
         this.predicateQueue = preds;
         this.firstParent = p1;
         this.secondParent = p2;
-        
     }
     
-    public Sentence(PriorityQueue<Predicate> preds, Sentence p1, Sentence p2, String substitution, boolean heuristics)
+    public Sentence(PriorityQueue<Predicate> preds, Sentence p1, Sentence p2, String substitution)
     {
-    	this.heuristics = heuristics;
         this.predicateQueue = preds;
         this.firstParent = p1;
         this.secondParent = p2;
@@ -69,10 +60,10 @@ public class Sentence implements Comparable<Sentence> {
     }
 
     @Override
-    public int compareTo(Sentence that)
+    public int compareTo(Object o)
     {
-        //return lower score for priority queue
-        return Integer.compare(that.score, this.score);
+        Sentence that = (Sentence) o;
+        return Integer.compare(this.heuristicScore(), that.heuristicScore());
     }
 
     public PriorityQueue<Predicate> getPreds()
@@ -85,41 +76,19 @@ public class Sentence implements Comparable<Sentence> {
         return predicateQueue.isEmpty() && firstParent != null && secondParent != null;
     }
 
-    private void score(boolean heuristics){
-        if(heuristics){
-        	heuristicScore();
-        }
-        else{
-        	randomScore();
-        }
-    }
-    public void heuristicScore()
+    public int heuristicScore()
     {
-        this.score = 0;
-        this.score += predicateQueue.size();
+        int score = 0;
+        score += predicateQueue.size();
         
         for (Predicate predicate : predicateQueue)
         {
-<<<<<<< HEAD
             score += predicate.getParams().size();
-=======
-        	this.score += predicate.getParams().length;
->>>>>>> 9fc13cc451b6eb92ceecb2d67c3d5885146a05da
             
         }
+        return score;
+    }
 
-    }
-    
-    public void randomScore(){
-    	Random rand = new Random();
-    	this.score = rand.nextInt(20);
-    }
-    
-
-    public int getScore(){
-    	return this.score;
-    }
-    
     public Sentence resolve(Sentence that)
     {
         for (Predicate p1 : this.predicateQueue)
@@ -160,7 +129,7 @@ public class Sentence implements Comparable<Sentence> {
         {
             newPreds.add(predicate.substitute(sub));
         }
-        return new Sentence(newPreds, this.firstParent, this.secondParent, sub, this.heuristics);
+        return new Sentence(newPreds, this.firstParent, this.secondParent, sub);
     }
 
     private Sentence or(Sentence that, Sentence thisP, Sentence thatP)
@@ -174,7 +143,7 @@ public class Sentence implements Comparable<Sentence> {
         {
             combinedPreds.add(predicate);
         }
-        return new Sentence(combinedPreds, thisP, thatP, this.substitution, this.heuristics);
+        return new Sentence(combinedPreds, thisP, thatP, this.substitution);
     }
     
     private Sentence remove(Predicate p1)
@@ -191,7 +160,7 @@ public class Sentence implements Comparable<Sentence> {
             }
         }
         clone.removeAll(toRemove);
-        return new Sentence(clone, this.firstParent, this.secondParent, this.heuristics);
+        return new Sentence(clone, this.firstParent, this.secondParent);
     }
     
     public String getParents(String path)

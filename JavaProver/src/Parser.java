@@ -17,17 +17,12 @@ public class Parser {
 		}
 	}
 
-<<<<<<< HEAD
 	public KnowledgeBase fillKnowledgeBase(File filename) throws FileNotFoundException {
-=======
-	public KnowledgeBase fillKnowledgeBase(String filename, boolean heuristics) {
->>>>>>> 9fc13cc451b6eb92ceecb2d67c3d5885146a05da
 		String line;
 		HashSet<Sentence> kbSentences = new HashSet<>();
 		HashSet<Sentence> kbRefute = new HashSet<>();
 		KnowledgeBase retKB;
 
-<<<<<<< HEAD
 		Scanner inFile = new Scanner(filename);
 		
 		while (inFile.hasNextLine()) {
@@ -36,15 +31,6 @@ public class Parser {
 				kbSentences.add(parseSentence(line));
 			} else {
 				kbRefute.add(parseSentence(inFile.nextLine()));
-=======
-		try (BufferedReader reader = Files.newBufferedReader(Paths.get(filename), Charset.defaultCharset())) {
-			while ((line = reader.readLine()) != null) {
-				if (!line.equals("")) {
-					kbSentences.add(parseSentence(line, heuristics));
-				} else {
-					kbRefute.add(parseSentence(reader.readLine(), heuristics));
-				}
->>>>>>> 9fc13cc451b6eb92ceecb2d67c3d5885146a05da
 			}
 		}
 		
@@ -53,7 +39,7 @@ public class Parser {
 		return retKB;
 	}
 
-	public Sentence parseSentence(String sentence, boolean heuristics) {
+	public Sentence parseSentence(String sentence) {
 		PriorityQueue<Predicate> predicates = new PriorityQueue<>();
 		Sentence retSentence;
 		
@@ -62,14 +48,9 @@ public class Parser {
 		while (sent.hasNext()) {
 			predicates.add(parsePredicates(sent.next()));
 		}
-<<<<<<< HEAD
 
 		retSentence = new Sentence(predicates);
 		sent.close();
-=======
-		retSentence = new Sentence(predicates, heuristics);
-		
->>>>>>> 9fc13cc451b6eb92ceecb2d67c3d5885146a05da
 		return retSentence;
 	}
 
