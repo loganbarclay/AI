@@ -42,7 +42,7 @@ public class KnowledgeBase {
 					predsParams.add(string);
 				}
 				for (String string : predsParams) {
-					if (paramsSeen.contains(string) && !changedNames.containsKey(string) && !Param.isConst(string)) {
+					if (paramsSeen.contains(string) && !changedNames.containsKey(string) && !ParameterChecker.isConstant(string)) {
 						changedNames.put(string, string + next++);
 					}
 				}
@@ -51,7 +51,7 @@ public class KnowledgeBase {
 				ArrayList<String> params = p.getParams();
 				for (int i = 0; i < params.size(); i++) {
 					String param = params.get(i);
-					if (changedNames.get(param) != null && !Param.isConst(param)) {
+					if (changedNames.get(param) != null && !ParameterChecker.isConstant(param)) {
 						params.set(i, changedNames.get(param));
 					}
 				}

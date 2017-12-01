@@ -7,8 +7,8 @@ public class Predicate implements Comparable<Predicate> {
 	private final boolean neg;
 	private final String name;
 	private final ArrayList<String> params;
-	private final Pattern csv = Pattern.compile(",");
-	private final Pattern space = Pattern.compile(" ");
+	private final Pattern comma = Pattern.compile(",");
+	private final Pattern whitespace = Pattern.compile(" ");
 
 	public Predicate(boolean neg, String name, ArrayList<String> params) {
 		this.neg = neg;
@@ -36,25 +36,7 @@ public class Predicate implements Comparable<Predicate> {
 		return pred;
 	}
 
-	@Override
-	public int hashCode() {
-		int hash = 0;
-		hash += this.neg ? 71 : 0;
-		hash += this.name.hashCode();
-		for (String string : params) {
-			/*
-			 * leaving the number on for the hashcode because a predicate with the same
-			 * params in one sentence is not equal to one in another sentence
-			 */
-			hash += string.hashCode();
-		}
-		return hash;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return hashCode() == ((Predicate) obj).hashCode();
-	}
 
 	public String getName() {
 		return name;
@@ -105,10 +87,10 @@ public class Predicate implements Comparable<Predicate> {
 			return "failure";
 		} else if (!x.contains("(") && x.contains(",") && !y.contains("(") && y.contains(",")) {
 			// for a list of arguments that have been passed
-			String[] xList = csv.split(x);
+			String[] xList = comma.split(x);
 			String xCar = xList[0];
 			String xCdr = flatten(xList, 1, xList.length, true);
-			String[] yList = csv.split(y);
+			String[] yList = comma.split(y);
 			String yCar = yList[0];
 			String yCdr = flatten(yList, 1, yList.length, true);
 			return unify(xCdr, yCdr, unify(xCar, yCar, sub));
@@ -122,9 +104,9 @@ public class Predicate implements Comparable<Predicate> {
 			return unify(xParams, yParams, unify(xOp, yOp, sub));
 		} else if (x.equals(y)) {
 			return sub;
-		} else if (!Param.isConst(x)) {
+		} else if (!ParameterChecker.isConstant(x)) {
 			return unifyVar(x, y, sub);
-		} else if (!Param.isConst(y)) {
+		} else if (!ParameterChecker.isConstant(y)) {
 			return unifyVar(y, x, sub);
 		} else {
 			return "failure";
@@ -132,7 +114,7 @@ public class Predicate implements Comparable<Predicate> {
 	}
 
 	public Predicate substitute(String substitution) {
-		String[] subs = space.split(substitution);
+		String[] subs = whitespace.split(substitution);
 		for (String aSub : subs) {
 			String[] sub = aSub.trim().split("/");
 			for (int i = 0; i < params.size(); i++) {
@@ -155,6 +137,49 @@ public class Predicate implements Comparable<Predicate> {
 	@Override
 	public int compareTo(Predicate that) {
 
-		return 0;
+		
+		int check = this.params.size() - that.params.size();
+		if(check != 0){
+			
+			return -1*Integer.compare( this.params.size(), that.params.size());
+		}else{
+			int theseConstants = 0;
+			int thoseConstants = 0;
+			for(String param : this.params){
+				
+				if(ParameterChecker.isConstant(param)){
+					theseConstants ++;
+				}	
+			}
+			for(String param : that.params){
+				if(ParameterChecker.isConstant(param)){
+					thoseConstants++;
+				}
+			}
+			
+			return -1*Integer.compare(theseConstants, thoseConstants);
+			//return 0;
+		}
+		
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += this.neg ? 71 : 0;
+		hash += this.name.hashCode();
+		for (String string : params) {
+			/*
+			 * leaving the number on for the hashcode because a predicate with the same
+			 * params in one sentence is not equal to one in another sentence
+			 */
+			hash += string.hashCode();
+		}
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return hashCode() == ((Predicate) obj).hashCode();
 	}
 }
