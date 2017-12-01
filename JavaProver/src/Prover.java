@@ -46,7 +46,9 @@ public class Prover {
 			support = resolve(heuristicsKB.getSentences(), support, heuristics);
 		}
 		heurFinish = System.currentTimeMillis();
-
+		if (support == null) {
+			System.out.println("failure");
+		}
 		randStart = System.currentTimeMillis();
 		support = resolve(randomKB.getSentences(), randomKB.getRefuted(), random);
 		if (support == null) {
@@ -72,6 +74,9 @@ public class Prover {
 		Sentence result;
 		for (Sentence supporting : support) {
 			for (Sentence sentence : sentences) {
+				if (supporting.getPreds().size() >= 500) {
+					return null;
+				}
 				result = supporting.resolve(sentence);
 				if (result != null) {
 					if (result.isGoal()) {
