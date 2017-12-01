@@ -18,22 +18,18 @@ public class KnowledgeBase {
     @Override
     public String toString()
     {
-    	String retVal = "";
-        StringBuilder builder = new StringBuilder();
+    	String kb = "";
         for (Sentence sentence : sentences)
         {
-            
-        	retVal += sentence.toString();
-        	builder.append(sentence.toString());
+        	kb += sentence.toString();
         }
-        retVal += "\n";
-        builder.append("\n");
+        kb += "\n";
+
         for (Sentence refutedPredicate : refuted)
         {
-        	retVal += refutedPredicate.toString();
-            builder.append(refutedPredicate.toString());
+        	kb += refutedPredicate.toString();
         }
-        return retVal;
+        return kb;
     }
 
     public KnowledgeBase standardizeVariables()
