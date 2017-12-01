@@ -22,7 +22,7 @@ public class Parser {
 		KnowledgeBase retKB;
 
 		Scanner inFile = new Scanner(filename);
-		
+
 		while (inFile.hasNextLine()) {
 			line = inFile.nextLine();
 			if (!line.equals("")) {
@@ -31,7 +31,7 @@ public class Parser {
 				kbRefute.add(parseSentence(inFile.nextLine()));
 			}
 		}
-		
+
 		retKB = new KnowledgeBase(kbSentences, kbRefute);
 		inFile.close();
 		return retKB;
@@ -40,12 +40,12 @@ public class Parser {
 	public Sentence parseSentence(String sentence) {
 		PriorityQueue<Predicate> predicates = new PriorityQueue<>();
 		Sentence retSentence;
-		
+
 		sentence = sentence.replaceAll("\\( ", "\\(");
 		sentence = sentence.replaceAll(" \\)", "\\)");
-		
+
 		Scanner sent = new Scanner(sentence);
-		
+
 		while (sent.hasNext()) {
 			Predicate retPred = parsePredicates(sent.next());
 			if (retPred != null) {
@@ -63,22 +63,22 @@ public class Parser {
 		Predicate retPredicate;
 		boolean negation = false;
 		String nameStr = "";
-		ArrayList params = new ArrayList();
+		ArrayList<String> params = new ArrayList<String>();
 		String tmpParams;
-		//System.out.println(predicate);
+		// System.out.println(predicate);
 		if (predicate.charAt(j) == '!') {
 			negation = true;
 			j++;
 		}
 		try {
-		nameStr = predicate.substring(j, predicate.indexOf('('));
-		} catch(Exception e) {
+			nameStr = predicate.substring(j, predicate.indexOf('('));
+		} catch (Exception e) {
 			return null;
 		}
-		j = (predicate.indexOf('(')+1);
+		j = (predicate.indexOf('(') + 1);
 		try {
-		tmpParams = predicate.substring(j, predicate.indexOf(')'));
-		} catch(Exception e) {
+			tmpParams = predicate.substring(j, predicate.indexOf(')'));
+		} catch (Exception e) {
 			return null;
 		}
 		Scanner scan = new Scanner(tmpParams).useDelimiter(",");
@@ -87,10 +87,10 @@ public class Parser {
 		}
 
 		retPredicate = new Predicate(negation, nameStr, params);
-		
+
 		scan.close();
 		return retPredicate;
-		
+
 	}
 
 }
