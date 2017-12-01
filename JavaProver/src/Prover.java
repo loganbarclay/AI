@@ -65,10 +65,6 @@ public class Prover {
 	public static HashSet<Sentence> resolve(HashSet<Sentence> sentencesSet, HashSet<Sentence> supportSet,
 			boolean heuristics) {
 
-		// List<Sentence> sentences = new LinkedList<>(sentencesSet);
-		// List<Sentence> support = new LinkedList<>(supportSet);
-		// Collections.sort(sentences);
-		// Collections.sort(support);
 		PriorityQueue<Sentence> sentences = new PriorityQueue<>(sentencesSet);
 		PriorityQueue<Sentence> support = new PriorityQueue<>(supportSet);
 

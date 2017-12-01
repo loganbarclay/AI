@@ -81,14 +81,15 @@ public class Parser {
 		} catch (Exception e) {
 			return null;
 		}
-		Scanner scan = new Scanner(tmpParams).useDelimiter(",");
+		Scanner scanner = new Scanner(tmpParams);
+		Scanner scan = scanner.useDelimiter(",");
 		while (scan.hasNext()) {
 			params.add(scan.next());
 		}
 
 		retPredicate = new Predicate(negation, nameStr, params);
 
-		scan.close();
+		scanner.close();
 		return retPredicate;
 
 	}

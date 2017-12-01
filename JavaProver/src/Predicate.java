@@ -18,17 +18,22 @@ public class Predicate implements Comparable<Predicate> {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(neg ? "!" : "");
-		builder.append(name);
-		builder.append("(");
-		for (int i = 0; i < params.size(); i++) {
-			String generalName = params.get(i);// .replaceAll("\\d*$", "");
-			builder.append(generalName);
-			builder.append(i == params.size() - 1 ? "" : ",");
+		String pred = "";
+		
+		if (neg == true) {
+			pred += "!";
 		}
-		builder.append(") ");
-		return builder.toString();
+		pred += name + "(";
+		
+		for (int i = 0; i < params.size(); i++) {
+			pred += params.get(i);
+			if (i != (params.size() - 1)) {
+				pred += ",";
+			}
+		}
+		pred += ") ";
+
+		return pred;
 	}
 
 	@Override
