@@ -3,15 +3,17 @@ import java.util.PriorityQueue;
 import java.util.Random;
 
 public class Sentence implements Comparable<Sentence> {
-
+	private final int PREDICATE_WEIGHT = 5;
+	private final int PARAMETER_WEIGHT = 1;
+	private int score;
+	private boolean heuristics;
+	
 	private PriorityQueue<Predicate> predicateQueue;
 	private Sentence firstParent;
 	private Sentence secondParent;
 	private String substitution = null;
-	private int score;
-	private boolean heuristics;
-	private final int PREDICATE_WEIGHT = 5;
-	private final int PARAMETER_WEIGHT = 1;
+
+
 
 	public Sentence(PriorityQueue<Predicate> preds, boolean heuristics) {
 		this.heuristics = heuristics;
@@ -29,8 +31,7 @@ public class Sentence implements Comparable<Sentence> {
 
 	}
 
-	public Sentence(PriorityQueue<Predicate> preds, Sentence firstParent, Sentence secondParent, String substitution,
-			boolean heuristics) {
+	public Sentence(PriorityQueue<Predicate> preds, Sentence firstParent, Sentence secondParent, String substitution, boolean heuristics) {
 		this.heuristics = heuristics;
 		this.predicateQueue = preds;
 		this.firstParent = firstParent;
@@ -38,7 +39,7 @@ public class Sentence implements Comparable<Sentence> {
 		this.substitution = substitution;
 		score(heuristics);
 	}
-
+	
 	private void score(boolean heuristics) {
 		if (heuristics) {
 			heuristicScore();
@@ -67,6 +68,7 @@ public class Sentence implements Comparable<Sentence> {
 		return this.score;
 	}
 
+
 	public PriorityQueue<Predicate> getPreds() {
 		return predicateQueue;
 	}
@@ -78,6 +80,8 @@ public class Sentence implements Comparable<Sentence> {
 		return false;
 	}
 
+
+
 	public Sentence resolve(Sentence that) {
 		Sentence retSentence = null;
 		for (Predicate pred1 : this.predicateQueue) {
@@ -87,14 +91,14 @@ public class Sentence implements Comparable<Sentence> {
 					if (sub != null && sub.equals("")) {
 						Sentence removeThis = this.remove(pred1).remove(pred2);
 						Sentence removedFromThat = that.remove(pred1).remove(pred2);
-
+						
 						retSentence = removeThis.folOR(removedFromThat, this, that);
 					} else if (sub != null) {
 						Sentence thisRemoved = this.remove(pred1).remove(pred2);
 						Sentence thatRemoved = that.remove(pred1).remove(pred2);
 						Sentence thisSubbed = thisRemoved.substitution(sub);
 						Sentence thatSubbed = thatRemoved.substitution(sub);
-
+						
 						retSentence = thisSubbed.folOR(thatSubbed, this, that);
 					} else {
 						continue;
@@ -139,18 +143,32 @@ public class Sentence implements Comparable<Sentence> {
 		return retSentence;
 	}
 
-	public String getParents(String path) {
+	public String parentString(String path) {
 		if (this.firstParent != null && this.secondParent != null) {
-			String me = this.toString().trim().equals("") ? "goal " : this.toString().replace("\n", "");
-			String derivedFrom = path + "\nunify(" + this.firstParent.toString().replace("\n", "") + ", "
-					+ this.secondParent.toString().replace("\n", "") + ") => " + me;
-			return this.firstParent.getParents("") + this.secondParent.getParents("") + derivedFrom
-					+ (this.substitution == null ? "Negations cancel"
-							: "Substitution:" + this.substitution.replaceAll("/", "="));
+			String here = this.toString().trim();
+			if(here.equals("")){
+				here = "GOAL: ";
+			}else{
+				this.toString().replaceAll("\n", "");
+			}
+			
+			path += "\nUNIFY: ( " 
+				+ this.firstParent.toString().replace("\n", "").trim() + ", "			
+				+ this.secondParent.toString().replace("\n", "") + ")"
+				+ "\nRESOLVES TO: \t " + here;
+			
+			path = this.firstParent.parentString("") + this.secondParent.parentString("") + path + "\t";
+			
+			if(this.substitution != null){
+				path += "SUBSTITUTION: " + this.substitution;
+			}else{
+				path += "NEGATED PREDICATES";
+			}
+					
 		}
 		return path;
 	}
-
+	
 	@Override
 	public String toString() {
 		String retVal = "";

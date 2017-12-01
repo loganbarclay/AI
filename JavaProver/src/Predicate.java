@@ -158,7 +158,7 @@ public class Predicate implements Comparable<Predicate> {
 			}
 			
 			return -1*Integer.compare(theseConstants, thoseConstants);
-			//return 0;
+
 		}
 		
 	}
