@@ -8,9 +8,12 @@ import java.util.Scanner;
 
 public class Parser {
 
+	private HashSet<Predicate> subsumptionSet;
 	private boolean heuristics;
+	private final boolean USE_SUBSUMPTION = false;
 
 	public Parser() {
+		subsumptionSet = new HashSet<>();
 		heuristics = true;
 	}
 
@@ -58,6 +61,7 @@ public class Parser {
 		return retSentence;
 	}
 
+	@SuppressWarnings("unused")
 	public Predicate parsePredicates(String predicate) {
 		int j = 0;
 		Predicate retPredicate;
@@ -90,7 +94,58 @@ public class Parser {
 		retPredicate = new Predicate(negation, nameStr, params);
 
 		scanner.close();
+
+		///////////////////////////////
+		// LOGIC FOR SUBSUMPTION IS HERE
+		///////////////////////////////
+
+		if (heuristics && USE_SUBSUMPTION) {
+			if (!checkSubsumptionSet(retPredicate)) {
+				retPredicate = null;
+			} else {
+				subsumptionSet.add(retPredicate);
+			}
+		}
 		return retPredicate;
+
+	}
+
+	/**
+	 * Checks for subsumption
+	 * 
+	 * @param checkPred
+	 * @return
+	 */
+	private boolean checkSubsumptionSet(Predicate checkPred) {
+		boolean shouldAdd = true;
+		ArrayList<String> checkParams = checkPred.getParams();
+		int checkSize = checkParams.size();
+		boolean checkNeg = checkPred.isNeg();
+		boolean allConstants = checkPred.isAllConstants();
+
+		if (allConstants) {
+			for (Predicate predicate : this.subsumptionSet) {
+				if (!predicate.getName().equals(checkPred.getName())) {
+
+					continue;
+				} else if (checkNeg == predicate.isNeg()) {
+
+					continue;
+				} else if (predicate.getParams().size() != checkSize) {
+					continue;
+				} else {
+					
+					if(predicate.isAllVariables()){
+						shouldAdd = false;
+						break;
+					}
+
+				}
+			}
+
+		}
+
+		return shouldAdd;
 
 	}
 

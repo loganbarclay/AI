@@ -13,6 +13,7 @@ public class KnowledgeBase {
 		this.sentences = sentences;
 		this.refuted = refuted;
 	}
+	
 
 	@Override
 	public String toString() {

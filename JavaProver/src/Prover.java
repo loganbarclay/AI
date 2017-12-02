@@ -33,11 +33,13 @@ public class Prover {
 		KnowledgeBase heuristicsKB = heurParser.fillKnowledgeBase(inputFile, heuristics);
 		Parser randParser = new Parser();
 		KnowledgeBase randomKB = randParser.fillKnowledgeBase(inputFile, random);
+		System.out.println(randomKB.toString());
+		System.out.println("hueristics KB");
 		System.out.println(heuristicsKB.toString());
 
 		heuristicsKB = heuristicsKB.standardizeVariables();
 
-		heurStart = System.currentTimeMillis();
+		heurStart = System.nanoTime();
 		HashSet<Sentence> support = resolve(heuristicsKB.getSentences(), heuristicsKB.getRefuted(), heuristics);
 		if (support == null) {
 			System.out.println("failure");
@@ -45,11 +47,9 @@ public class Prover {
 		while (support != null) {
 			support = resolve(heuristicsKB.getSentences(), support, heuristics);
 		}
-		heurFinish = System.currentTimeMillis();
-		if (support == null) {
-			System.out.println("failure");
-		}
-		randStart = System.currentTimeMillis();
+		heurFinish = System.nanoTime();
+
+		randStart = System.nanoTime();
 		support = resolve(randomKB.getSentences(), randomKB.getRefuted(), random);
 		if (support == null) {
 			System.out.println("failure");
@@ -58,7 +58,7 @@ public class Prover {
 		while (support != null) {
 			support = resolve(randomKB.getSentences(), support, random);
 		}
-		randFinish = System.currentTimeMillis();
+		randFinish = System.nanoTime();
 
 		printResults();
 
@@ -109,15 +109,14 @@ public class Prover {
 	}
 
 	private static void printResults() {
-		long heurTime = heurFinish - heurStart;
-		long randTime = randFinish - randStart;
 		DecimalFormat twoDForm = new DecimalFormat("#.##");
-	    
-		double resImprovement =100.0* (1.0 - (double)heurNumResolutions / randNumResolutions);
-		double timeImprovement =100.0* (1.0 - (double)heurTime/ randTime);
-		
-		
-		System.out.println("===============================");	
+		double heurTime = Double.valueOf(twoDForm.format((double)(heurFinish - heurStart)/(1000000)));
+		double randTime = Double.valueOf(twoDForm.format((double)(randFinish - randStart)/(1000000)));
+
+		double resImprovement = 100.0 * (1.0 - (double) heurNumResolutions / randNumResolutions);
+		double timeImprovement = 100.0 * (1.0 - (double) heurTime / randTime);
+
+		System.out.println("===============================");
 		System.out.println("===== Random results =======");
 		System.out.println(randParents);
 		System.out.println("Resolutions: " + randNumResolutions);
@@ -126,7 +125,7 @@ public class Prover {
 
 		System.out.println("===============================");
 		System.out.println("===== Heuristic results =======");
-		System.out.println(heurParents);		
+		System.out.println(heurParents);
 		System.out.println("Resolutions: " + heurNumResolutions);
 
 		System.out.println("Time: " + heurTime + " milliseconds");
@@ -135,11 +134,17 @@ public class Prover {
 		System.out.println("============|===========================|============================");
 		System.out.println("            |  Random   |  Heuristics   | Improvement with Heuristics");
 		System.out.println("============|===========================|============================");
-		System.out.println("Resolutions |\t" + randNumResolutions + "\t|\t" + heurNumResolutions + "\t|\t" + Double.valueOf(twoDForm.format(resImprovement)) + "%");
-		System.out.println("Time (ms)   |\t" + randTime +           "\t|\t" + heurTime +           "\t|\t" + Double.valueOf(twoDForm.format(timeImprovement)) + "%");
+		try {
+		System.out.println("Resolutions |\t" + randNumResolutions + "\t|\t" + heurNumResolutions + "\t|\t"
+				+ Double.valueOf(twoDForm.format(resImprovement)) + "%");
 		
-
+			System.out.println("Time (ms)   |\t" + randTime + "\t|\t" + heurTime + "\t|\t"
+					+ Double.valueOf(twoDForm.format(timeImprovement)) + "%");
+		} catch (NumberFormatException e) {
+			System.out.println("Resolutions |\t" + randNumResolutions + "\t|\t" + heurNumResolutions + "\t|\t"
+					+ resImprovement + "%");
+			System.out.println("Time (ms)   |\t" + randTime + "\t|\t" + heurTime + "\t|\t" + timeImprovement + "%");
+		}
 
 	}
 }
-
