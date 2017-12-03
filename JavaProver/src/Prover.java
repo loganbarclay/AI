@@ -74,7 +74,7 @@ public class Prover {
 		Sentence result;
 		for (Sentence supporting : support) {
 			for (Sentence sentence : sentences) {
-				if (supporting.getPreds().size() >= 500) {
+				if (supporting.getPreds().size() >= 200) {
 					return null;
 				}
 				result = supporting.resolve(sentence);
