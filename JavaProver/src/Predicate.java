@@ -229,4 +229,14 @@ public class Predicate implements Comparable<Predicate> {
 		}
 		return true;
 	}
+
+	public boolean isNegativeLiteral() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public Sentence getAtomicSentence() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
