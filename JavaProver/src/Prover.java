@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 public class Prover {
 	private static int heurNumResolutions = 0;
@@ -40,7 +41,7 @@ public class Prover {
 		heuristicsKB = heuristicsKB.standardizeVariables();
 
 		heurStart = System.nanoTime();
-		HashSet<Sentence> support = resolve(heuristicsKB.getSentences(), heuristicsKB.getRefuted(), heuristics);
+		Set<Sentence> support = resolve(heuristicsKB.getSentences(), heuristicsKB.getRefuted(), heuristics);
 		if (support == null) {
 			System.out.println("failure");
 		}
@@ -65,7 +66,7 @@ public class Prover {
 		System.exit(0);
 	}
 
-	public static HashSet<Sentence> resolve(HashSet<Sentence> sentencesSet, HashSet<Sentence> supportSet,
+	public static Set<Sentence> resolve(Set<Sentence> sentencesSet, Set<Sentence> supportSet,
 			boolean heuristics) {
 
 		PriorityQueue<Sentence> sentences = new PriorityQueue<>(sentencesSet);
