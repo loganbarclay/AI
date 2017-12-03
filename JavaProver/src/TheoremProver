@@ -6,10 +6,9 @@ args1=$1
 
 if [ -z "$1" ]; then
         echo "Missing .txt file, exiting.."
-        echo "Usage : $0 <text file> ""
+        echo "Usage : $0 <text file> "
         exit 1
 fi
 
-cd src
 
-java Prover ../$1
+java Prover $1
